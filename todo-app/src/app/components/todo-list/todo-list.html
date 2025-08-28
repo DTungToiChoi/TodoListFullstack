@@ -1,0 +1,126 @@
+<div class="todo-container">
+      <h1 class="title">📋 Todo List</h1>
+
+      <!-- Add New Todo Form -->
+      <div class="add-todo-section">
+        <h3>Thêm công việc mới</h3>
+        <div class="form-group">
+          <input
+            type="text"
+            [(ngModel)]="newTodoTitle"
+            placeholder="Nhập tiêu đề công việc..."
+            class="form-input"
+            (keyup.enter)="addTodo()"
+          />
+          <button
+            class="add-btn"
+            (click)="addTodo()"
+            [disabled]="!newTodoTitle.trim() || isLoading"
+          >
+            {{ isLoading ? 'Đang thêm...' : '➕ Thêm' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading && todos.length === 0" class="loading">
+        <div class="spinner"></div>
+        <p>Đang tải danh sách...</p>
+      </div>
+
+      <!-- Todo Stats -->
+      <div *ngIf="todos.length > 0" class="stats">
+        <div class="stat-item">
+          <span class="stat-number">{{ todos.length }}</span>
+          <span class="stat-label">Tổng công việc</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ completedCount }}</span>
+          <span class="stat-label">Đã hoàn thành</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ pendingCount }}</span>
+          <span class="stat-label">Chưa hoàn thành</span>
+        </div>
+      </div>
+
+      <!-- Todo List -->
+      <div class="todo-list">
+        <div *ngIf="todos.length === 0 && !isLoading" class="empty-state">
+          <div class="empty-icon">📝</div>
+          <h3>Chưa có công việc nào</h3>
+          <p>Hãy thêm công việc đầu tiên của bạn!</p>
+        </div>
+
+        <div
+          *ngFor="let todo of todos; trackBy: trackByFn"
+          class="todo-item"
+          [class.completed]="todo.isDone"
+        >
+          <div class="todo-content">
+            <!-- Checkbox -->
+            <label class="checkbox-container">
+              <input
+                type="checkbox"
+                [checked]="todo.isDone"
+                (change)="toggleTodo(todo)"
+              />
+              <span class="checkmark"></span>
+            </label>
+
+            <!-- Todo Text -->
+            <div class="todo-text">
+              <span
+                class="todo-title"
+                [class.completed]="todo.isDone"
+              >
+                {{ todo.title }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="todo-actions">
+            <button
+              class="edit-btn"
+              (click)="startEdit(todo)"
+              *ngIf="editingId !== todo.id"
+              title="Sửa"
+            >
+              ✏️
+            </button>
+            <button
+              class="delete-btn"
+              (click)="deleteTodo(todo.id)"
+              title="Xóa"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+
+        <!-- Edit Form (appears when editing) -->
+        <div
+          *ngIf="editingId !== null"
+          class="edit-form"
+        >
+          <input
+            type="text"
+            [(ngModel)]="editingTitle"
+            class="edit-input"
+            (keyup.enter)="saveEdit()"
+            (keyup.escape)="cancelEdit()"
+          />
+          <div class="edit-actions">
+            <button class="save-btn" (click)="saveEdit()">💾 Lưu</button>
+            <button class="cancel-btn" (click)="cancelEdit()">❌ Hủy</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-message">
+        <p>❌ {{ errorMessage }}</p>
+        <button class="retry-btn" (click)="loadTodos()">🔄 Thử lại</button>
+      </div>
+    </div>
