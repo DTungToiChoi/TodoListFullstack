@@ -5,6 +5,14 @@
 git clone https://github.com/DTungToiChoi/TodoListFullstack.git
 cd TodoListFullstack
 
+Cài đặt các package/phụ thuộc
+
+Project .NET (Backend)
+dotnet restore
+
+Project Angular (Frontend):
+npm install
+
 ### 2. Chạy Backend
 cd TodoApi
 dotnet restore
